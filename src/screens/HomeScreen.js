@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, FlatList, Image, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { SafeAreaView,StatusBar, StyleSheet, Text,Dimensions, View, FlatList, Image, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native'
 import server from '../api/Trendinit'
-import { Card, Divider } from 'react-native-elements';
+import { Card, Divider,Tile} from 'react-native-elements';
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const HomeScreen = ({ navigation }) => {
     const [posts, setPosts] = useState([])
@@ -29,7 +31,9 @@ const HomeScreen = ({ navigation }) => {
     }
     else {
         return (
+          
             <View >
+                <StatusBar  />
 
                 <FlatList
 
@@ -40,9 +44,20 @@ const HomeScreen = ({ navigation }) => {
                         return (
 
                             <TouchableOpacity onPress={() => navigation.navigate('Post', { id: item._id })}>
-                                <Image style={styles.image} source={{ uri: `https://trendinit.herokuapp.com/image/${item.imagename}` }} />
+                                <Tile
+                        activeOpacity={0.5}
+                        imageSrc={{ uri: `https://trendinit.herokuapp.com/image/${item.imagename}` }}
+                        title={item.title}
+                        titleStyle={{marginTop:170,fontSize:18}}
+                        height={(windowHeight/3)-16}
+                        featured
+                        overlayContainerStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                        
 
-                                <View style={styles.tint}><Text style={styles.title} >{item.title}</Text></View>
+                    />
+                                {/* <Image style={styles.image} source={{ uri: `https://trendinit.herokuapp.com/image/${item.imagename}` }} />
+
+                                <View style={styles.tint}><Text style={styles.title} >{item.title}</Text></View> */}
                             </TouchableOpacity>
 
 
@@ -116,6 +131,7 @@ const HomeScreen = ({ navigation }) => {
 
 
             </View>
+          
         )
     }
 }
