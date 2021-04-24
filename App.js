@@ -5,11 +5,7 @@ import { createAppContainer } from 'react-navigation';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from 'react-navigation-stack'
-import HomeScreen from './src/screens/HomeScreen';
-import PostScreen from './src/screens/PostScreen';
-import CategoryScreen from './src/screens/CategoryScreen';
-import ByAuthorScreen from './src/screens/ByAuthorScreen';
-import CategoryListScreen from './src/screens/CategoryListScreen'
+import {HomeScreenNavigator,CategoryScreenNavigator,AdminScreenNavigator} from './src/CustomNavigator/CustomNavigator'
 import Admin from './src/screens/Admin'
 import {Icon} from 'react-native-elements'
 
@@ -35,7 +31,8 @@ export default function App(){
     <NavigationContainer>
        
       <Tab.Navigator
-      screenOptions={({ route }) => ({
+    
+      screenOptions={({ route}) => ({
         headerTitleAlign: 'center',
           headerStyle: {
             backgroundColor: '#621FF7',
@@ -44,6 +41,7 @@ export default function App(){
           headerTitleStyle :{
             fontWeight: 'bold',
           },
+          
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           // switch(route.name){
@@ -55,12 +53,12 @@ export default function App(){
           //      iconName='login'
           // }
           // console.log(route.name)
-          if (route.name === 'Home') {
+          if (route.name === 'HomeTab') {
             iconName = 'home'
-          } else if (route.name === 'Category') {
+          } else if (route.name === 'CategoryTab') {
             iconName = 'list';
           }
-          else if(route.name==='Admin'){
+          else if(route.name==='AdminTab'){
          
             iconName = 'face'
           }
@@ -70,29 +68,37 @@ export default function App(){
         },
       })}
       tabBarOptions={{
-        activeTintColor: 'tomato',
-        inactiveTintColor: 'gray',
-      }}>
-        <Tab.Screen name='Home'  component={HomeScreen}  options={{
+        style:{
+        
+          backgroundColor:'#282c34',
+
+        },
+        activeTintColor: '#ff6600',
+        inactiveTintColor: 'white',
+      }}
+      
+      
+      >
+        <Tab.Screen name='HomeTab'  component={HomeScreenNavigator}  options={{
           tabBarLabel: ({ focused, color }) => {
             return (
-              <Text style={{color:'black'}} >Home</Text>
+              <Text style={{color:focused? '#ff6600' : 'white'}} >Home</Text>
             )
           }
         }}  />
-        <Tab.Screen name='Category' component={CategoryListScreen} 
+        <Tab.Screen name='CategoryTab' component={CategoryScreenNavigator} 
          options={{
           tabBarLabel: ({ focused, color }) => {
             return (
-              <Text style={{color:'black'}} >Categories</Text>
+              <Text style={{color:focused? '#ff6600' : 'white'}} >Categories</Text>
             )
           }
         }} />
-        <Tab.Screen name='Admin' component={Admin}
+        <Tab.Screen name='AdminTab' component={AdminScreenNavigator}
          options={{
           tabBarLabel: ({ focused, color }) => {
             return (
-              <Text style={{color:'black'}} >Admin</Text>
+              <Text style={{color:focused? '#ff6600' : 'white'}} >Admin</Text>
             )
           }
         }}

@@ -1,0 +1,4 @@
+[submodule "src/cloud-services-core"]
+	path = src/cloud-services-core
+	url = https://github.com/futuristiclabs/cloud-services-core.git
+	branch = commonServices
