@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { SafeAreaView,StatusBar, StyleSheet, Text,Dimensions, View, FlatList, Image, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { SafeAreaView,StatusBar, StyleSheet, Text,Dimensions, View, FlatList, Image, ScrollView, TouchableOpacity, ActivityIndicator,TouchableWithoutFeedback } from 'react-native'
 import server from '../api/Trendinit'
-import { Card, Divider,Tile} from 'react-native-elements';
+import {Divider,Tile,ListItem} from 'react-native-elements'
+import firebase from '../trendinitServices/index'
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -12,16 +13,27 @@ const HomeScreen = ({ navigation }) => {
 
     useEffect(() => {
         setLoading(true)
-        server.get('/home').then(res => {
-            setPosts(res.data.articles)
-            setLoading(false)
+        getArticles()
+        // server.get('/home').then(res => {
+        //     setPosts(res.data.articles)
+        //     setLoading(false)
 
-        }).catch(err => {
-            console.log(err)
-        })
+        // }).catch(err => {
+        //     console.log(err)
+        // })
 
 
     }, [])
+    const getArticles = async()=>{
+        try {
+            const articles = await firebase.articles.read()
+           
+            setPosts(articles)
+            setLoading(false)
+        } catch (error) {
+            console.log(err)
+        }
+    }
     const top = posts.slice(0, 3)
     const old = posts.slice(3)
 
@@ -37,28 +49,27 @@ const HomeScreen = ({ navigation }) => {
 
                 <FlatList
 
-                    keyExtractor={(post) => post._id}
+                    keyExtractor={(post) => post.id}
                     data={top}
                     renderItem={({ item }) => {
 
                         return (
 
-                            <TouchableOpacity onPress={() => navigation.navigate('Post', { id: item._id })}>
+                            
                                 <Tile
                         activeOpacity={0.5}
-                        imageSrc={{ uri: `https://trendinit.herokuapp.com/image/${item.imagename}` }}
+                        imageSrc={{ uri: `${item.image}` }}
                         title={item.title}
                         titleStyle={{marginTop:170,fontSize:18}}
                         height={(windowHeight/3)-16}
                         featured
                         overlayContainerStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
+                        onPress={() => navigation.navigate('Post', { id: item.id })}
                         
 
                     />
-                                {/* <Image style={styles.image} source={{ uri: `https://trendinit.herokuapp.com/image/${item.imagename}` }} />
-
-                                <View style={styles.tint}><Text style={styles.title} >{item.title}</Text></View> */}
-                            </TouchableOpacity>
+                               
+                           
 
 
                         )
@@ -68,57 +79,44 @@ const HomeScreen = ({ navigation }) => {
 
                             <FlatList
                                 ListHeaderComponent={
-                                    <>
-                                        {/* <Text style={styles.oldHeading}>Old Posts</Text> */}
-                                        <Text style={{ textAlign: 'center', fontSize: 18, marginTop: 10 }}>Categories</Text>
-                                        <Divider />
-                                        <ScrollView horizontal style={{ marginTop: 10 }} showsHorizontalScrollIndicator={false}>
-                                            <TouchableOpacity onPress={() => navigation.navigate('Category', { category: 'Sports' })} >
-                                                <Text style={styles.cat}>Sports</Text>
-
-                                            </TouchableOpacity >
-                                            <TouchableOpacity onPress={() => navigation.navigate('Category', { category: 'Politics' })}>
-                                                <Text style={styles.cat}>Politics</Text>
-
-                                            </TouchableOpacity >
-                                            <TouchableOpacity onPress={() => navigation.navigate('Category', { category: 'Technology' })}>
-
-                                                <Text style={styles.cat}>Technology</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => navigation.navigate('Category', { category: 'Entertainment' })}>
-
-                                                <Text style={styles.cat}>Entertainment</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => navigation.navigate('Category', { category: 'International' })}>
-
-                                                <Text style={styles.cat}>International</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => navigation.navigate('Category', { category: 'Others' })}>
-
-                                                <Text style={styles.cat}>Others</Text>
-                                            </TouchableOpacity>
-
-
-
-                                        </ScrollView>
-
-                                    </>
+                                    <View style={{flexDirection:'column',justifyContent:'space-around',alignItems:'center'}}>
+                                    <Text h4>Recent Posts</Text>
+                                    
+                                    <Divider style={{height:2}} />
+                                    </View>
                                 }
+                                
                                 data={old}
                                 keyExtractor={(post) => post._id}
                                 renderItem={({ item }) => {
                                     return (
                                         <View >
-                                            <TouchableOpacity onPress={() => navigation.navigate('Post', { id: item._id })}>
-                                                <Card>
+                                            <TouchableWithoutFeedback onPress={() => navigation.navigate('Post', { id: item.id })}>
+
+                                                <ListItem bottomDivider >
+                                                    <ListItem.Content >
+                                                        <View style={{flexDirection:'row',alignItems:'center',paddingHorizontal:0}}>
+
+                                                       
+                                                        <Image style={{width:100,height:100,borderRadius:10}} source={{ uri: `${item.image}` }} />
+                                                        <Text style={{marginRight:90,marginLeft:20}}>{item.title}</Text>
+                                                        {/* <ListItem.Subtitle   >{item.title}</ListItem.Subtitle> */}
+                                                        </View>
+
+                                                      
+                                                    </ListItem.Content>
+
+                                                </ListItem>
+                                               
+                                                {/* <Card containerStyle={{borderWidth:3,borderRadius:30}}>
 
                                                     <Card.Image source={{ uri: `https://trendinit.herokuapp.com/image/${item.imagename}` }} />
                                                     <Text style={styles.oldTitle}>
                                                         {item.title}
                                                     </Text>
-                                                </Card>
+                                                </Card> */}
 
-                                            </TouchableOpacity>
+                                            </TouchableWithoutFeedback>
                                         </View>
                                     )
                                 }}

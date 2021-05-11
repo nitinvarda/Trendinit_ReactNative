@@ -1,71 +1,74 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
-import { Card, Divider } from 'react-native-elements'
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator,TouchableWithoutFeedback } from 'react-native'
+import { Card, Divider,Image } from 'react-native-elements'
 import server from '../api/Trendinit';
 
-const CategoryScreen = ({ navigation }) => {
-    const Category = navigation.getParam('category')
+import firebase from '../trendinitServices/index'
+
+const CategoryScreen = ({ route,navigation }) => {
+    const category = route.params.category
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         setLoading(true)
-        server.get('/cat/' + Category)
-            .then(res => {
-                setPosts(res.data)
-                setLoading(false)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    }, [Category])
+        getCategory()
+    }, [category])
+
+
+    const getCategory = async()=>{
+        try {
+            const categoryArticles = await firebase.articles.search({keyword:[['category','==',`${category}`]]})
+            setPosts(categoryArticles)
+            setLoading(false)
+        } catch (error) {
+            
+        }
+    }
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 200 }} />
 
     }
     else {
         return (
-            <View>
+          
 
                 <FlatList
-                    ListHeaderComponent={
-                        <View>
-
-                            {/* <Text style={styles.catHeader}>Category : {Category}</Text>
-                            <Divider /> */}
-                        </View>
-                    }
+                   
+                    style={{marginBottom:20}}
                     data={posts}
                     keyExtractor={(post) => post._id}
                     renderItem={({ item }) => {
                         return (
-                            <View >
-                                <TouchableOpacity onPress={() => navigation.navigate('Post', { id: item._id })}>
-                                    <Card>
+                          
+                                <TouchableWithoutFeedback onPress={() => navigation.navigate('Post', { id: item.id })}>
+                                    <Card containerStyle={{borderRadius:20}}>
                                         {/* <Card.Title>HELLO WORLD</Card.Title>
                                                     <Card.Divider /> */}
-                                        <Card.Image source={{ uri: `https://trendinit.herokuapp.com/image/${item.imagename}` }} />
-                                        <Text style={styles.oldTitle}>
+                                                    <Image PlaceholderContent={<ActivityIndicator />} source={{ uri: `${item.image}` }} style={{borderRadius:20, width: '100%', height: 200 }} />
+                                        {/* <Card.Image source={{ uri: `https://trendinit.herokuapp.com/image/${item.imagename}` }} height={'100%'} /> */}
+                                        <Text style={{padding:15,fontSize:16}}>
                                             {item.title}
                                         </Text>
                                     </Card>
                                     {/* <Image style={styles.oldImage} source={{ uri: `https://trendinit.herokuapp.com/image/${item.imagename}` }} />
                                                 <Text style={styles.oldTitle}>{item.title}</Text> */}
-                                </TouchableOpacity>
-                            </View>
+                                </TouchableWithoutFeedback>
+                       
                         )
                     }}
                 />
-            </View>
+           
         )
     }
 }
 
-CategoryScreen.navigationOptions = ({ navigation }) => {
-    return {
-        title: 'Category: ' + navigation.getParam('category')
-    }
-}
+// CategoryScreen.navigationOptions = ({ navigation }) => {
+//     console.log(navigation)
+//     return {
+//         title: 'Category: ' + navigation.getParam('category')
+//     }
+// }
 
 export default CategoryScreen
 

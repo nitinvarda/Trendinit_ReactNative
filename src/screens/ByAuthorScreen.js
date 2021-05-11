@@ -3,23 +3,29 @@ import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableOpacity }
 import { Card, Divider } from 'react-native-elements'
 import server from '../api/Trendinit';
 
-const ByAuthorScreen = ({ navigation }) => {
-    const Name = navigation.getParam('name')
+import firebase from '../trendinitServices/index'
+
+const ByAuthorScreen = ({ route,navigation }) => {
+    const name = route.params.name
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         setLoading(true)
-        server.get('/by/' + Name)
-            .then(res => {
-                setPosts(res.data)
-                setLoading(false)
-            })
-            .catch(err => {
-                console.log(err)
-            })
+        getArticlesByAuthor()
 
-    }, [Name])
+    }, [name])
+
+    const getArticlesByAuthor = async()=>{
+        try {
+            const authorArticles = await firebase.articles.search({keyword:[["by","==",`${name}`]]})
+            setPosts(authorArticles)
+            setLoading(false)
+            
+        } catch (error) {
+            
+        }
+    }
 
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 200 }} />
@@ -32,19 +38,19 @@ const ByAuthorScreen = ({ navigation }) => {
                     ListHeaderComponent={
                         <View>
 
-                            <Text style={styles.nameHeader}>By : {Name}</Text>
+                            <Text style={styles.nameHeader}>By : {name}</Text>
                             <Divider />
                         </View>
                     }
                     data={posts}
-                    keyExtractor={(post) => post._id}
+                    keyExtractor={(post) => post.id}
                     renderItem={({ item }) => {
                         return (
                             <View >
-                                <TouchableOpacity onPress={() => navigation.navigate('Post', { id: item._id })}>
+                                <TouchableOpacity onPress={() => navigation.navigate('Post', { id: item.id })}>
                                     <Card>
 
-                                        <Card.Image source={{ uri: `https://trendinit.herokuapp.com/image/${item.imagename}` }} />
+                                        <Card.Image source={{ uri: `${item.image}` }} />
                                         <Text style={styles.oldTitle}>
                                             {item.title}
                                         </Text>

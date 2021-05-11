@@ -33,32 +33,19 @@ const CatList = [{
 },{ 
     id:6,
     name:'Others',
-    image:'https://media-exp1.licdn.com/dms/image/C4E1BAQEZE36NYfoPiw/company-background_10000/0/1519800716813?e=2159024400&v=beta&t=XOQo7VYh9qm7bbKgeCOUl5xLTM__yB6z_sxQ7pWoaMc'
+    image:'https://static.wikia.nocookie.net/bdccb5c5-d0ee-4a8c-9122-1d78d65cd656'
+   
 }]
 
 
 const numColumns = 2;
 const tileSize = windowWidth / numColumns - 10 ;
 
-const backgroundColors= [
-    '',
-    'orange',
-    'blue',
-    'green',
-    
-    'orange',
-    'blue',
-    'green',
-]
 
-export default function CategoryListScreen(props) {
+export default function CategoryListScreen({navigation}) {
+   
     return (
-        <View>
-          
-  
-
-
-           
+        <View>           
                 <FlatList 
             data={CatList}
             keyExtractor={(item)=>item.id}
@@ -66,30 +53,11 @@ export default function CategoryListScreen(props) {
             renderItem={({item})=>{
                 
                 return(
-                    // <View 
-                    // style={{
-                    //     width:tileSize,
-                    //     height:tileSize,
-                    //     alignItems:'center',
-                    //     flexDirection:'row',
-                    //     justifyContent:'center',
-                    //     // backgroundColor:`${backgroundColors[item.id]}`,
-                    //     marginHorizontal:5,
-                    //     marginVertical:5,
-                    //     shadowColor: "#000",
-                    //     shadowOffset: {
-                    //         width: 0,
-                    //         height: 1,
-                    //     },
-                    //     shadowOpacity: 0.20,
-                    //     shadowRadius: 1.41,
-
-                    //     elevation: 2,
-                    //     }} >
+                   
 
                             <Tile
                       
-                      imageSrc={{ uri: item.image }}
+                      imageSrc={{uri:item.image}}
                       imageContainerStyle={{width: windowWidth/2, height:windowHeight/3-16 }}
                       
                       title={item.name}
@@ -97,6 +65,7 @@ export default function CategoryListScreen(props) {
                       
                       
                       featured
+                      onPress={()=>navigation.navigate('CategoryScreen',{category:item.name})}
                       activeOpacity={0.5}
                       overlayContainerStyle={{backgroundColor:'rgba(0,0,0,0.7)'}}
                       containerStyle={{
@@ -122,11 +91,7 @@ export default function CategoryListScreen(props) {
                       
 
                   />
-                //   {/* <Image source={{uri:item.image}}  />
-                //    <Text>{item.name}</Text> */}
-                        
-                //     </View>
-
+               
                         )
                     }}
                     
