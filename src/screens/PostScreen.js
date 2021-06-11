@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, Image, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, ActivityIndicator, TouchableOpacity,Share } from 'react-native'
 import server from '../api/Trendinit'
 import {Icon} from 'react-native-elements'
 
@@ -22,7 +22,6 @@ const PostScreen = ({ route,navigation }) => {
     const getArticle = async()=>{
         try{
             const article = await firebase.articles.getById(id)
-            console.log(article.createdAt.toDate())
             const date = new Date(article.createdAt?.toDate())
             setDate(`${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`)
             setTime(`${date.getHours()}:${date.getMinutes()}`)
@@ -34,6 +33,17 @@ const PostScreen = ({ route,navigation }) => {
 
 
         }
+    }
+
+
+
+    const share = ()=>{
+        Share.share({
+            title: post.title,
+            message: `${post.title}  https://trendinit.netlify.app/post/${post.id}`,
+        }, {
+            dialogTitle: 'Share ' + post.title
+        })
     }
 
     if (loading) {
@@ -106,7 +116,7 @@ const PostScreen = ({ route,navigation }) => {
                         </View> */}
                         <View style={styles.info}>
                             
-                            <TouchableOpacity activeOpacity={0.8} style={{flex:1}} onPress={() => navigation.navigate('Category', { category: post.category })}>
+                            <TouchableOpacity activeOpacity={0.8} style={{flex:1}} onPress={() => navigation.navigate('CategoryTab',{screen:'CategoryScreen',params:{ category: post.category} })}>
                             <View style={{
                                 flex:1,
                                 borderWidth:0.05,
@@ -171,10 +181,6 @@ const PostScreen = ({ route,navigation }) => {
 
             </ScrollView>
             
-          
-           
-
-          
             <TouchableOpacity
             // onPress={()=>setActive(!active)}
             style={{
@@ -192,7 +198,7 @@ const PostScreen = ({ route,navigation }) => {
                 borderRadius:100,
                 }}
             >
-                <Icon name='share' color={'white'} />
+                <Icon name='share' onPress={share} color={'white'} />
             </TouchableOpacity>
             
             

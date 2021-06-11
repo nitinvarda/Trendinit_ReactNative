@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useMemo } from 'react'
 import { SafeAreaView,StatusBar, StyleSheet, Text,Dimensions, View, FlatList, Image, ScrollView, TouchableOpacity, ActivityIndicator,TouchableWithoutFeedback } from 'react-native'
 import server from '../api/Trendinit'
-import {Divider,Tile,ListItem} from 'react-native-elements'
+import {Divider,Tile,ListItem,Button} from 'react-native-elements'
 import firebase from '../trendinitServices/index'
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = (props) => {
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
+        console.log(props)
         setLoading(true)
         getArticles()
         // server.get('/home').then(res => {
@@ -37,6 +40,51 @@ const HomeScreen = ({ navigation }) => {
     const top = posts.slice(0, 3)
     const old = posts.slice(3)
 
+
+    const obtainNotificationPermission= async()=>{
+        let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS);
+        if(permission.status !== 'granted'){
+            permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
+            if(permission.status !== 'granted'){
+                console.log('Permission not granted to show notifications')
+
+            }
+        }
+        return permission;
+
+    }
+
+    const presentLocalNotification=async()=>{
+        try{
+            await obtainNotificationPermission();
+            await Notifications.setNotificationHandler({
+                handleNotification:async()=>{
+                    return{
+                        shouldShowAlert:true,
+                        shouldPlaySound:true,
+                        shouldSetBadge:true,
+                    }
+                }
+            });
+            const content = {
+                title: 'Your Reservation',
+                body: 'Reservation for  requested',
+                ios: {
+                    sound: true
+                },
+                android: {
+                    sound: true,
+                    vibrate: true,
+                    color: '#512DA8'
+                },
+            }
+            await Notifications.scheduleNotificationAsync({ content, trigger: null })
+
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
 
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 200 }} />
@@ -64,7 +112,7 @@ const HomeScreen = ({ navigation }) => {
                         height={(windowHeight/3)-16}
                         featured
                         overlayContainerStyle={{backgroundColor:'rgba(0,0,0,0.5)'}}
-                        onPress={() => navigation.navigate('Post', { id: item.id })}
+                        onPress={() => props.navigation.navigate('Post', { id: item.id })}
                         
 
                     />
@@ -81,7 +129,7 @@ const HomeScreen = ({ navigation }) => {
                                 ListHeaderComponent={
                                     <View style={{flexDirection:'column',justifyContent:'space-around',alignItems:'center'}}>
                                     <Text h4>Recent Posts</Text>
-                                    
+                                    <Button title='notify' onPress={presentLocalNotification} />
                                     <Divider style={{height:2}} />
                                     </View>
                                 }
@@ -91,7 +139,7 @@ const HomeScreen = ({ navigation }) => {
                                 renderItem={({ item }) => {
                                     return (
                                         <View >
-                                            <TouchableWithoutFeedback onPress={() => navigation.navigate('Post', { id: item.id })}>
+                                            <TouchableWithoutFeedback onPress={() => props.navigation.navigate('Post', { id: item.id })}>
 
                                                 <ListItem bottomDivider >
                                                     <ListItem.Content >
@@ -141,7 +189,7 @@ HomeScreen.navigationOptions = () => {
     }
 }
 
-export default HomeScreen
+export default React.memo(HomeScreen, (prevState, nextState) => prevState.show === nextState.show)
 
 const styles = StyleSheet.create({
     image: {

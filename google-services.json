@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "978489005268",
+    "project_id": "trendinit-28f34",
+    "storage_bucket": "trendinit-28f34.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:978489005268:android:45fa80c8e77c4a58619741",
+        "android_client_info": {
+          "package_name": "com.trendinit.trendinit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "978489005268-jlinr14pqngkmvbsi6v1p9tpq9vosnfb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChMZbghcGL-Fdc-2YQ-0h3g56_n6ceD9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "978489005268-jlinr14pqngkmvbsi6v1p9tpq9vosnfb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -28,13 +28,13 @@ const HomeScreenNavigator =()=> {
 const CategoryScreenNavigator = ()=>{
 
     return(
-        <Stack.Navigator>
-        <Stack.Screen name='Categories' component={CategoryListScreen} options={{headerShown:false}}  />
-        <Stack.Screen name='CategoryScreen' options={({route})=>({title:route.params.category})} component={CategoryScreen} />
+        <Stack.Navigator initialRouteName='Categories'>
+            <Stack.Screen name='Categories' component={CategoryListScreen} options={{headerShown:false}}  />
+            <Stack.Screen name='CategoryScreen' options={({route})=>({title:route.params.category})} component={CategoryScreen} />
 
-        <Stack.Screen name='Post' component={PostScreen} options={{headerShown:false}} />
-        
-    </Stack.Navigator>
+            <Stack.Screen name='Post' component={PostScreen} options={{headerShown:false}} />
+            
+        </Stack.Navigator>
 
     )
 }
